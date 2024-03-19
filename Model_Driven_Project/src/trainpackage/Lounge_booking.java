@@ -1,9 +1,9 @@
 package trainpackage;
 import java.util.ArrayList;
 
-public class Lounge_booking {
-    public int lounge_id,room_no,price;
-	public String name,user_name;
+class Lounge_booking{
+	int lounge_id,room_no,price;
+	String name,user_name;
 	public Lounge_booking(String user_name,int lounge_id,String name, int room_no, int price){
 		this.user_name=user_name;
 		this.lounge_id=lounge_id;
