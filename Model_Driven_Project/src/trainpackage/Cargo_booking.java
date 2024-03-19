@@ -1,9 +1,9 @@
 package trainpackage;
 import java.util.ArrayList;
 
-public class Cargo_booking extends Booking{
-    int coach_no;
-	public String username;
+class Cargo_booking extends Booking{
+	int coach_no;
+	String username;
 	float weight;
 
 	public Cargo_booking(int train_no,String from, String to, String date,String time,int coach_no,String username,float weight){
