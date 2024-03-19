@@ -1,6 +1,6 @@
 package trainpackage;
-public class Cargo_train_cabin_details extends Train_details{
-    int[][] cabin_no=new int[4][4];
+class Cargo_train_cabin_details extends Train_details{
+	int[][] cabin_no=new int[4][4];
 	public Cargo_train_cabin_details(int train_no,String from,String to,String date,String start_time,String stop_time){
 		super(train_no,from,to,date,start_time,stop_time);
 		int s=1;
@@ -19,11 +19,17 @@ public class Cargo_train_cabin_details extends Train_details{
 		}
 	}
 	public void book(int cabin_number){
+		int booked=0;
 		for(int i=0;i<4;i++){
 			for (int j=0;j<4;j++){
 				if(cabin_no[i][j]==cabin_number)
 				   cabin_no[i][j]=0;
+				   booked=1;
 			}
+		}
+		if(booked==0){
+		System.out.println("The seat is already booked");
+		
 		}
 	}
 	public static void seat_reverse(int train_no, int cabin_num,Cargo_train_cabin_details cabin_trains[]){
