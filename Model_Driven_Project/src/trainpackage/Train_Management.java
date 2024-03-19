@@ -4,7 +4,8 @@ import java.util.Scanner;
 
 
 public class Train_Management {
-    public static void main(String[] args) throws Exception {
+	public static void main(String args[]) {
+		
 		Pass_train_seat_details pass_trains[]= new Pass_train_seat_details[4];
 		pass_trains[0]=new Pass_train_seat_details(1001, "Chennai", "Delhi","02-03-2024","02:05","19:45");
 		pass_trains[1]=new Pass_train_seat_details(1002, "Mumbai", "Kolkata","07-03-2024","12:10","18:30");
@@ -29,6 +30,8 @@ public class Train_Management {
 		ArrayList<Cargo_booking> cargo_book_list= new ArrayList<>();
 		ArrayList<Lounge_booking> lounge_book_list = new ArrayList<>();
 		ArrayList<Feedback> Feedback_list = new ArrayList<>();
+		ArrayList<Passenger_details> pass_details = new ArrayList<>();
+	
 
 	    int choice=1;	
 		Scanner sc= new Scanner(System.in);
@@ -47,6 +50,9 @@ public class Train_Management {
 				String username= sc.next();
 				System.out.print("Please enter your password : ");
 				String password= sc.next();
+				System.out.print("Enter your age: ");
+				int age=sc.nextInt();
+				pass_details.add(new Passenger_details(username,password,age));
 			while(flag==1){
 				System.out.println("""
                                                    1. Search trains
@@ -59,7 +65,11 @@ public class Train_Management {
 												   \t\t\t\t    8. Cancel lounge
 												   \t\t\t\t    9. Check membership
                                                    10. Provide feedback
-												   11. Logout""");
+												   11. check my discount
+												   12. Check meal discount
+												   13. Check allowed baggage
+												   14. Edit Profile
+												   15. Logout""");
 				System.out.print("Enter your choice");
 				int ch=sc.nextInt();
 				switch(ch){
@@ -72,15 +82,45 @@ public class Train_Management {
 						break;
 
 					case 2:
-						System.out.println("Please select your train");
-						System.out.print("Enter the train no:");
-						int train_no_book=sc.nextInt();
+					int flag3=0,seat_no=17,train_no_book=0,flag4=1,flag_train=1;
+					while(flag3==0){
+						
+						System.out.println("Please select the train");
+						while(flag_train == 1){
+						System.out.print("Enter the train from the list(1,2,3,4):");
+						train_no_book=sc.nextInt();
+						if(train_no_book>4 || train_no_book<1)
+						{
+							System.out.println("PLease enter valid train number");
+						}
+						else flag_train=0;
+						}
+						if(pass_trains[train_no_book-1].availableseats<2)
+						System.out.println("The train is full, please select other train");
+						if(train_no_book<=4)
+						flag3=1;
+						else
+						System.out.println("Enter the valid number");
+					}
 						pass_trains[train_no_book-1].display_seat();
+						while(seat_no>16 || flag4==1){
 						System.out.print("Enter the seat no:");
-						int seat_no=sc.nextInt();
-						pass_trains[train_no_book-1].book(seat_no);
+						seat_no=sc.nextInt();
+				
+						
+						if(seat_no>16)
+						System.out.println("The entered seat number is not valid");
+						if(flag4==0)
+						System.out.println("The entered seat is already booked");
+						if(seat_no<16 || flag4!=0){
+						flag4=pass_trains[train_no_book-1].book(seat_no);
+
 						pass_book_list.add(new Pass_booking(pass_trains[train_no_book-1].train_no,pass_trains[train_no_book-1].from,pass_trains[train_no_book-1].to,pass_trains[train_no_book-1].date,pass_trains[train_no_book-1].start_time,seat_no,username,null));
+						
+					}
+						}
 						break;
+						
 					case 3:
 						System.out.printf("%-10s %-9s %-8s %-13s %-10s %-6s %-13s %-13s%n", "User name","Train No", "From", "Destination", "Date", "Time", "Seat Number","Meal type");
 						for(int i=0;i<pass_book_list.size();i++){
@@ -93,16 +133,27 @@ public class Train_Management {
 						System.out.print("Enter Seat no:");
 						int cancel_seat_no=sc.nextInt();
 					    Pass_booking.cancel_booking(cancel_train_no,cancel_seat_no,pass_book_list,pass_trains);
+
 						break;
 					case 4:
+					int flag2=0;
+					String meal_type="";
 						System.out.printf("%-15s %-60s %-60s %-6s%n", "Name","Menu", "Ingredients", "Price");
 						for(int i=0;i<2;i++){
 							meal_list[i].display("pass");
 						}
+						
+						while(flag2==0){
 						System.out.print("Please enter your meal type : ");
 						int meal_choice = sc.nextInt();
-						String meal_type = meal_list[meal_choice-1].name;
-
+						if(meal_choice<2)
+						{
+						meal_type = meal_list[meal_choice-1].name;
+						flag2=1;
+						}
+						else
+						System.out.println("Select only from the list");
+					}
 						for(int i=0;i<pass_book_list.size();i++){
 							if(pass_book_list.get(i).username.equals(username))
 								pass_book_list.get(i).display_booking();
@@ -153,10 +204,24 @@ public class Train_Management {
 						Lounge_booking.cancel_lounge_booking(cancel_lounge_no,cancel_room_no,lounge_book_list,lounge_details);
 						break;
 					case 10:
+                    	int flag1=0,rating=0,train_no_flag=0,train_no=0;
+						while(train_no_flag==0){
 						System.out.print("Enter your train_no:");
-						int train_no= sc.nextInt();
-						System.out.print("Enter your ratings:");
-						int rating=sc.nextInt();
+						train_no= sc.nextInt();
+						for(int i=0;i<pass_book_list.size();i++)
+						if(pass_book_list.get(i).username.equals(username) && pass_book_list.get(i).train_no==train_no)
+						train_no_flag=1;
+						if(train_no_flag==0)
+						System.out.println("you can only prodvide feedbacks for the train you have booked");
+						}
+						while(flag1==0){
+                        System.out.print("Enter your ratings:");
+						rating=sc.nextInt();
+						if(rating>=1 && rating<=5)
+						flag1=1;
+						else
+						System.out.println("Enter ratings between 1 and 5");
+						}
 						System.out.print("Enter your Category of your feedback:");
 						String category=sc.next();
 						System.out.print("Enter your description of your feedback:");
@@ -165,7 +230,51 @@ public class Train_Management {
 						System.out.printf("%-13s %-6s %-9s %-15s %-20s%n", "User name", "Train no","Ratings","Category","Description");
 						Feedback_list.get(0).display_feedback();
 						break;
-					case 11: 
+					case 11:
+						Membership member= new Membership();
+						System.out.printf("Your benifit on travel is %d%%",member.check_discount(pass_book_list,username));
+						break;
+					case 12:
+						Membership member1= new Membership();
+						System.out.printf("Your discount on meal is %d%%",member1.check_discount(pass_book_list,username)/2);
+						break;
+					case 13:
+						if(age<18)
+						System.out.println("You ca carry 2 luggages");
+						else if(age>18 && age<=60)
+						System.out.println("You ca carry 3 luggages");
+						else
+						System.out.println("You ca carry 4 luggages");
+					break;
+					case 14:
+					    String newUsername="";
+						System.out.println("Have a look at your profile details");
+						Passenger_details.display_profile(pass_details,username);
+						System.out.println("Please enter new values, if no chnages required enter ,");
+						for( int i = 0; i < pass_details.size(); i++){
+							if(pass_details.get(i).username.equals(username)){
+								System.out.println("Enter New Username: ");
+								newUsername = sc.next();
+								System.out.println("Enter New Password: ");
+								String newPassword = sc.next();
+								System.out.println("Enter New First_Name: ");
+								String newFirstname = sc.next();
+								System.out.println("Enter New Last_Name: ");
+								String newLastname = sc.next();
+								System.out.println("Enter New Age 0 if no change: ");
+								int newAge = sc.nextInt();
+								System.out.println("Enter New Address: ");
+								String newAddress = sc.next();
+								pass_details.get(i).edit_profile(newUsername, newPassword, newFirstname, newLastname, newAge, newAddress);
+							}
+						}
+						System.out.println("Have a look at your new profile details");
+						if(newUsername.equals(username))
+						Passenger_details.display_profile(pass_details,username);
+						else
+						Passenger_details.display_profile(pass_details,newUsername);
+					break;
+					case 15: 
 				    flag=0;
 					break;	     
 				}						
@@ -196,16 +305,36 @@ public class Train_Management {
 								cargo_trains[i].display();
 							break;
 						case 2:
+						int flag1=0;
 							System.out.println("Please select your train");
-							System.out.print("Enter the train no:");
+							System.out.print("Enter the train from the list(1,2,3,4):");
 							int train_no_book=sc.nextInt();
 							cargo_trains[train_no_book-1].display_cabin();
 							System.out.print("Enter the cabin no:");
 							int cabin_no=sc.nextInt();
 							cargo_trains[train_no_book-1].book(cabin_no);
-							System.out.print("Enter the weight of your package:");
-							Float weight= sc.nextFloat();
-							cargo_book_list.add(new Cargo_booking(cargo_trains[train_no_book-1].train_no,cargo_trains[train_no_book-1].from,cargo_trains[train_no_book-1].to,cargo_trains[train_no_book-1].date,cargo_trains[train_no_book-1].start_time,cabin_no,b_username, weight));
+							System.out.print("Enter the business type:");
+							String business_type=sc.next();
+							while (flag1==0) {
+								System.out.print("Enter the weight of your package:");
+								Float weight= sc.nextFloat();
+								if(business_type.equals("construction") && weight>=30 && weight<=40){
+								cargo_book_list.add(new Cargo_booking(cargo_trains[train_no_book-1].train_no,cargo_trains[train_no_book-1].from,cargo_trains[train_no_book-1].to,cargo_trains[train_no_book-1].date,cargo_trains[train_no_book-1].start_time,cabin_no,b_username, weight));
+								flag1=1;
+							}
+								else if(business_type.equals("textile") && weight>=15 && weight<=20){
+								cargo_book_list.add(new Cargo_booking(cargo_trains[train_no_book-1].train_no,cargo_trains[train_no_book-1].from,cargo_trains[train_no_book-1].to,cargo_trains[train_no_book-1].date,cargo_trains[train_no_book-1].start_time,cabin_no,b_username, weight));
+								flag1=1;
+								}
+								else if (weight>=5 && weight<=10){
+								cargo_book_list.add(new Cargo_booking(cargo_trains[train_no_book-1].train_no,cargo_trains[train_no_book-1].from,cargo_trains[train_no_book-1].to,cargo_trains[train_no_book-1].date,cargo_trains[train_no_book-1].start_time,cabin_no,b_username, weight));
+								flag1=1;
+							}
+							else
+							System.out.println("Enter the valid weight");
+						}
+							
+							
 							break;
 						case 3:
 							System.out.printf("%-10s %-9s %-8s %-13s %-10s %-6s %-13s %-13s%n", "User name","Train No", "From", "Destination", "Date", "Time", "Cabin Number","Meal type");
@@ -214,7 +343,7 @@ public class Train_Management {
 									cargo_book_list.get(i).display_booking();
 
 							}
-							System.out.print("Enter the train no:");
+						    System.out.print("Enter the train no:");
 							int cancel_train_no=sc.nextInt();
 							System.out.print("Enter cabin no:");
 							int cancel_cabin_no=sc.nextInt();
@@ -245,8 +374,9 @@ public class Train_Management {
 						flag=0;
 						break;										
 					}
+
 					
-			}
+			}break;
 			case 4:
 					System.out.println("Welcome Station Master ");
 					System.out.print("Please enter your username : ");
@@ -289,5 +419,5 @@ public class Train_Management {
 	}
 }
 	sc.close();
-    }
+}
 }
